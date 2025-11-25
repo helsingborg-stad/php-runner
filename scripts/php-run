@@ -1,7 +1,45 @@
 #!/usr/bin/env bash
 
-docker run --rm -it \
-	-v "$PWD":/app \
-	-w /app \
-	php-runner \
-	php "$@"
+# php-run wrapper
+# Usage:
+#   php-run [-e VAR=VALUE ...] [-r 'inline code' | script.php [args...]]
+
+DOCKER_ENV_FLAGS=()
+INLINE_CODE=""
+SCRIPT_ARGS=()
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		-e)
+			DOCKER_ENV_FLAGS+=("-e" "$2")
+			shift 2
+			;;
+		-r)
+			INLINE_CODE="$2"
+			shift 2
+			;;
+		*)
+			SCRIPT_ARGS+=("$1")
+			shift
+			;;
+	esac
+done
+
+# Decide what to run
+if [[ -n "$INLINE_CODE" ]]; then
+	docker run --rm -it \
+		-v "$PWD":/app \
+		-w /app \
+		"${DOCKER_ENV_FLAGS[@]}" \
+		php-runner \
+		php -r "$INLINE_CODE"
+else
+	# Last argument is the PHP script file
+	docker run --rm -it \
+		-v "$PWD":/app \
+		-w /app \
+		"${DOCKER_ENV_FLAGS[@]}" \
+		php-runner \
+		php "${SCRIPT_ARGS[@]}"
+fi
