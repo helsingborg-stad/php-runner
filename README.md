@@ -25,6 +25,16 @@ This repository provides:
      docker build -t php-runner .
      ```
 
+2. One-line install (curl)
+
+  You can install quickly with a single command (runs the installer via bash):
+
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/you/php-docker-runner/main/install.sh | bash
+  ```
+
+  Security note: review the script before running curl|bash in case you need to adjust the repository URL or inspect the steps it performs.
+
 2. After running the installer, ensure `$HOME/.local/bin` is in your `PATH`. The installer copies the launcher to that directory as `php-run`.
 
 3. Test:
