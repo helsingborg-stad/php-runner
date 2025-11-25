@@ -68,6 +68,20 @@ Implementation detail: the launcher uses `docker run --rm -it -v "$PWD":/app -w 
   docker build -t php-runner .
   ```
 
+## Image contents
+
+Built FROM `php:8.3-cli`, the image includes the following notable items (accurate to the current `Dockerfile`):
+
+- System packages installed with apt: `git`, `curl`, `unzip`, `libzip-dev`, `libonig-dev`, `libxml2-dev`, `libmagickwand-dev`, `ca-certificates` (plus `--no-install-recommends`).
+- PHP extensions installed/enabled: `zip`, `mbstring`, `xml` (via `docker-php-ext-install`) and `imagick` (installed via `pecl` and enabled).
+- Composer (installed to `/usr/local/bin/composer`).
+- Node.js (Node 20) and `npm` installed via NodeSource.
+- `WORKDIR` is set to `/app` and the image is intended to be used as a runnable CLI image (the provided `scripts/php-run` runs `php` inside this image).
+
+Notes:
+- The `-dev` packages (libzip-dev, libonig-dev, libxml2-dev, libmagickwand-dev) are required to build and enable some PHP extensions inside the image.
+- If you change the `Dockerfile`, update this section to keep the documentation accurate.
+
 ## Files
 
 - [`Dockerfile`](Dockerfile) — image definition
